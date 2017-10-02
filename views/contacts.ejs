@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>List Contacts</title>
+</head>
+
+<body>
+  <a href="/">Back to main</a><br><br>
+  <table style="width:50%" border="1px thin black">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>company</th>
+      <th>telp_number</th>
+      <th>email</th>
+    </tr>
+    <% for (let i=0 ; i < dataContacts.length ; i++) {%>
+      <tr>
+        <td>
+          <%=dataContacts[i].id%>
+        </td>
+        <td>
+          <%=dataContacts[i].name%>
+        </td>
+        <td>
+          <%=dataContacts[i].company%>
+        </td>
+        <td>
+          <%=dataContacts[i].telp_number%>
+        </td>
+        <td>
+          <%=dataContacts[i].email%>
+        </td>
+        <td>
+          <a href="/contacts/edit/<%=dataContacts[i].id%>">edit</a>
+        </td>
+        <td>
+          <a href="/contacts/delete/<%=dataContacts[i].id%>">delete</a>
+        </td>
+        <td>
+          <a href="/addresses/contact/<%=dataContacts[i].id%>">addresses</a>
+        </td>
+      </tr>
+      <%}%>
+  </table>
+
+
+  <form action="/contacts" method="post">
+    <input type="text" name="name" placeholder="First name"><br>
+    <input type="text" name="company" placeholder="Company"><br>
+    <input type="text" name="telp_number" placeholder="Phone Number"><br>
+    <input type="text" name="email" placeholder="Email"><br>
+    <select name="selectGroup" required>
+      <option value="">-- Please select group ---</option>
+      <% for (let i=0 ; i < dataGroups.length ; i++) {%>
+      <option value="<%=dataGroups[i].id%>"><%=dataGroups[i].name_of_group%></option>
+      <%}%>
+    </select><br>
+    <input type="submit" value="Add Contact">
+  </form>
+
+
+
+</body>
+
+</html>

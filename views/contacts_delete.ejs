@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Delete Contacts</title>
+</head>
+
+<body>
+
+  <form action="/contacts/delete/<%=dataContacts[0].id%>" method="post">
+    <input type="text" name="name"  readonly value="<%=dataContacts[0].name%>"><br>
+    <input type="text" name="company" readonly value="<%=dataContacts[0].company%>"><br>
+    <input type="text" name="telp_number" readonly value="<%=dataContacts[0].telp_number%>"><br>
+    <input type="text" name="email" readonly value="<%=dataContacts[0].email%>"><br>
+    <input type="submit" value="Delete Contacts">
+  </form>
+
+
+
+</body>
+
+</html>

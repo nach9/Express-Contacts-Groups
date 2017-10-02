@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Edit Groups</title>
+</head>
+
+<body>
+
+  <form action="/groups/edit/<%=dataGroups[0].id%>" method="post">
+    <input type="text" name="name_of_group" value="<%=dataGroups[0].name_of_group%>"><br>
+    <input type="submit" value="Edit Groups">
+  </form>
+
+</body>
+
+</html>
