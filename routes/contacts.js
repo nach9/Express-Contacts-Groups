@@ -5,53 +5,60 @@ var router = express.Router()
 // var db = new sqlite3.Database('data.db');
 
 const Contacts = require('../models/contacts')
+const Groups = require('../models/groups')
+const Contacts_Groups = require('../models/contacts_groups')
 
-// const contacts = new Contacts
 
-// contacts
-router.get('/',  (req, res) =>{ //orm done
-  Contacts.selectAll((dataContacts , dataGroups)=>{
-  res.render('contacts' , { dataContacts:dataContacts , dataGroups : dataGroups} )
+router.get('/', (req, res) => { //orm done
+  Promise.all([
+    Contacts.selectAll(),
+    Contacts_Groups.selectAll(),
+    Groups.selectAll()
+  ]).then((values)=>{
+    values[0].forEach(contact=>{
+      contact.groups=[]
+      values[1].forEach(conjunt=>{
+        values[2].forEach(group=>{
+          if(contact.id==conjunt.contactsID && conjunt.groupsID==group.id){
+            contact.groups.push(group.name_of_group)
+          }
+        })
+      })
+    })
+    console.log( values[0]);
+    res.render('contacts', { dataContacts: values[0], dataGroups: values[1] })
   })
 })
 
-router.post('/',  (req,res)=> {
-  Contacts.insertNew(req.body.name , req.body.company , req.body.telp_number , req.body.email , (result,lastID)=>{
-    res.redirect('contacts')
-  })
-  // db.all(`insert into contacts values( null , '${req.body.name}' , '${req.body.company}' , '${req.body.telp_number}' , '${req.body.email}'  )` , function(err){
-  //   if(err){
-  //     console.log(err);
-  //   } else{
-  //     db.all(`select max(id) maxid from Contacts`, (err,rows)=>{
-  //       db.all(`insert into Contacts_Groups values (null , '${rows[0].maxid}','${req.body.selectGroup}')`, (err,rows)=>{
-  //         res.redirect('contacts')
-  //       })
-  //     })
-  //   }
-  // })
-})
-
-router.get('/edit/:id' , (req,res)=>{ //orm done
-  Contacts.selectBy( 'id', req.params.id , (dataContacts)=>{
-    res.render('contacts_edit', { dataContacts : dataContacts })
+router.post('/', (req, res) => {
+  Contacts.insertNew(req.body.name, req.body.company, req.body.telp_number, req.body.email).then(newID =>{
+    Contacts_Groups.insertNew(newID,req.body.selectGroup).then(newID=>{
+      res.redirect('contacts')
+    })
   })
 })
 
-router.post('/edit/:id' , (req , res) =>{ //orm done
-  Contacts.editID ( req.body.name , req.body.company ,req.body.telp_number, req.body.email, err =>{
+router.get('/edit/:id', (req, res) => { //orm done
+  Contacts.selectBy('id' , req.params.id ).then((dataContacts)=>{
+    res.render('contacts_edit', {  dataContacts: dataContacts })
+  })
+})
+
+router.post('/edit/:id', (req, res) => { //orm done
+  Contacts.editID(req.params.id,req.body.name, req.body.company, req.body.telp_number, req.body.email).then( ()=>{
     res.redirect('../../contacts')
   })
+
 })
 
-router.get('/delete/:id' , (req,res) => {
-  Contacts.selectBy( 'id', req.params.id , (dataContacts)=>{
-    res.render('contacts_delete', { dataContacts : dataContacts })
+router.get('/delete/:id', (req, res) => {
+  Contacts.selectBy('id' , req.params.id ).then((dataContacts)=>{
+    res.render('contacts_delete', {  dataContacts: dataContacts })
   })
 })
 
-router.post('/delete/:id', (req,res)=>{
-  Contacts.deleteID( ()=> {
+router.post('/delete/:id', (req, res) => {
+  Contacts.deleteID( req.params.id).then(()=>{
     res.redirect('../../contacts')
   })
 })

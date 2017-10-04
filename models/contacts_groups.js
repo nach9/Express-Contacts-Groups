@@ -5,31 +5,29 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('data.db');
 
 
-class Profiles {
+class Contacts_Groups {
   constructor (data){
     this.id = data.id
-    this.username = data.username
-    this.password = data.password
-    this.contactID = data.contactID
-  
+    this.contactsID = data.contactsID
+    this.groupsID = data.groupsID
   }
 
   static selectAll(){
     return new Promise(function(resolve, reject) {
-      db.all('select * from profiles' , (err,rows)=>{
+      db.all('select * from Contacts_Groups' , (err,rows)=>{
         let dataRows=[]
         rows.forEach(row=>{
-          let profiles = new Profiles(row)
-          dataRows.push(profiles)
+          let contacts_Groups = new Contacts_Groups(row)
+          dataRows.push(contacts_Groups)
         })
         resolve(dataRows)
       })
     });
   }
 
-  static insertNew (username , password , contactID ){
+  static insertNew (contactID , groupsID  ){
     return new Promise(function(resolve, reject) {
-      db.run(`insert into profiles values( null , '${username}' , '${password}' , '${contactID}'   )` , function(err) {
+      db.run(`insert into Contacts_Groups values( null , '${contactID}' , '${groupsID}'   )` , function(err) {
         if(err){
           reject(err)
         }else{
@@ -41,21 +39,21 @@ class Profiles {
 
   static selectBy ( column , value ){
     return new Promise(function(resolve, reject) {
-      db.all(`select * from profiles where ${column} = '${value}'`,(err,rows)=>{
-        let dataProfiles = []
+      db.all(`select * from Contacts_Groups where ${column} = '${value}'`,(err,rows)=>{
+        let dataRows = []
         rows.forEach((row)=>{
-          let profile = new Profiles(row)
+          let contacts_Groups = new Contacts_Groups(row)
           // this.id = profile.id
-          dataProfiles.push(profile)
+          dataProfiles.push(contacts_Groups)
         })
-        resolve(dataProfiles)
+        resolve(dataRows)
       })
     });
   }
 
-  static editID ( id,username,password ){
+  static editID ( id,contactsID , groupsID){
     return new Promise(function(resolve, reject) {
-      db.run(`update profiles set username='${username}' , password = '${password}' where id = '${id}'`,err=>{
+      db.run(`update Contacts_Groups set contactsID='${contactsID}' , groupsID = '${groupsID}' where id = '${id}'`,err=>{
         resolve()
     });
   })
@@ -64,7 +62,7 @@ class Profiles {
 
   static deleteID (id){
     return new Promise(function(resolve, reject) {
-      db.run(`delete from profiles where id = '${id}'`,err=>{
+      db.run(`delete from Contacts_Groups where id = '${id}'`,err=>{
         resolve()
       })
     });
@@ -75,4 +73,4 @@ class Profiles {
 
 
 
-module.exports = Profiles;
+module.exports = Contacts_Groups;

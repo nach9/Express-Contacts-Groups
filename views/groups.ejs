@@ -12,6 +12,8 @@
     <tr>
       <th>id</th>
       <th>name_of_group</th>
+      <th>member</th>
+
     </tr>
     <% for (let i=0 ; i < dataGroups.length ; i++) {%>
       <tr>
@@ -20,6 +22,9 @@
         </td>
         <td>
           <%=dataGroups[i].name_of_group%>
+        </td>
+        <td>
+          <%=dataGroups[i].member%>
         </td>
 
         <td>

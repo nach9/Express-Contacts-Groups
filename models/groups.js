@@ -11,50 +11,61 @@ class Groups {
 
   }
 
-  static selectAll(cb) {
-    db.all('SELECT * FROM groups', (err, rows) => {
-      let dataRows = []
-      rows.forEach(row => {
-        let groups = new Groups(row)
-        dataRows.push(groups)
-      })
-      cb(dataRows)
+    static selectAll(){
+      return new Promise(function(resolve, reject) {
+        db.all('select * from groups' , (err,rows)=>{
+          let dataRows=[]
+          rows.forEach(row=>{
+            let profiles = new Groups(row)
+            dataRows.push(profiles)
+          })
+          resolve(dataRows)
+        })
+      });
+    }
+
+    static insertNew (name_of_group ){
+      return new Promise(function(resolve, reject) {
+        db.run(`insert into groups values( null , '${name_of_group}' )` , function(err) {
+          if(err){
+            reject(err)
+          }else{
+            resolve(this.lastID)
+          }
+        })
+      });
+    }
+
+    static selectBy ( column , value ){
+      return new Promise(function(resolve, reject) {
+        db.all(`select * from groups where ${column} = '${value}'`,(err,rows)=>{
+          let dataProfiles = []
+          rows.forEach((row)=>{
+            let profile = new Groups(row)
+            dataProfiles.push(profile)
+          })
+          resolve(dataProfiles)
+        })
+      });
+    }
+
+    static editID ( id,name_of_group ){
+      return new Promise(function(resolve, reject) {
+        db.run(`update groups set name_of_group='${name_of_group}'  where id = '${id}'`,err=>{
+          resolve()
+      });
     })
+    }
+
+
+    static deleteID (id){
+      return new Promise(function(resolve, reject) {
+        db.run(`delete from groups where id = '${id}'`,err=>{
+          resolve()
+        })
+      });
+    }
+
   }
-
-  static insertNew(name_of_group, cb) {
-    db.run(`insert into Groups values( null , '${name_of_group}')`, (err) => {
-      cb(err, this.lastID)
-    })
-  }
-
-
-  static selectBy(column, value, cb) {
-    db.all(`select * from groups where ${column} = '${value}'`, (err, rows) => {
-      let dataGroups = []
-      rows.forEach((row) => {
-        let groups = new Groups(row)
-        this.id = groups.id
-        console.log(dataGroups);
-        dataGroups.push(groups)
-      })
-      console.log(dataGroups);
-      cb(dataGroups)
-    })
-  }
-
-  static editID(name_of_group, cb) {
-    db.run(`update groups set name_of_group='${name_of_group}'  where id = '${this.id}'`, err => {
-      cb()
-    })
-  }
-
-  static deleteID(cb) {
-    db.run(`delete from groups where id = '${this.id}'`, err => {
-      cb()
-    })
-  }
-
-}
 
 module.exports = Groups;

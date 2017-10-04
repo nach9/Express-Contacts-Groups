@@ -11,53 +11,65 @@ class Addresses {
     this.city = data.city
     this.zipcode = data.zipcode
     this.contactID = data.contactID
-    this.contactName = data.contactName
   }
 
-  static selectAll(cb){
-    db.all('SELECT a.*,b.name as contactName FROM addresses a left join contacts b on a.contactID = b.id', (err,rows)=>{
-      let dataRows=[]
-      rows.forEach(row=>{
-        let addresses = new Addresses(row)
-        dataRows.push(addresses)
-        console.log(dataRows);
-      })
-      db.all('select * from Contacts' , (err,rows)=>{
-        cb(dataRows , rows)
-      })
+
+    static selectAll(){
+      return new Promise(function(resolve, reject) {
+        db.all('select * from addresses' , (err,rows)=>{
+          let dataRows=[]
+          rows.forEach(row=>{
+            let addresses = new Addresses(row)
+            dataRows.push(addresses)
+          })
+          resolve(dataRows)
+        })
+      });
+    }
+
+    static insertNew (street,city,zipcode,contactID ){
+      return new Promise(function(resolve, reject) {
+        db.run(`insert into addresses values( null , '${street}' , '${city}' , '${zipcode}' , '${contactID}'  )` , function(err) {
+          if(err){
+            reject(err)
+          }else{
+            resolve(this.lastID)
+          }
+        })
+      });
+    }
+
+    static selectBy ( column , value ){
+      return new Promise(function(resolve, reject) {
+        db.all(`select * from addresses where ${column} = '${value}'`,(err,rows)=>{
+          let dataAddress = []
+          rows.forEach((row)=>{
+            let addresses = new Addresses(row)
+            dataAddress.push(addresses)
+          })
+          resolve(dataAddress)
+        })
+      });
+    }
+
+    static editID ( id,street,city,zipcode,contactID ){
+      return new Promise(function(resolve, reject) {
+        db.run(`update addresses set street='${street}' , city = '${city}'  , zipcode = '${zipcode}' where id = '${id}'`,err=>{
+          resolve()
+      });
     })
-  }
+    }
 
-  static insertNew (street , city , zipcode, contactID ,cb){
-    db.run(`insert into addresses values( null , '${street}' , '${city}' , '${zipcode}' , '${contactID}')` , (err)=> {
-      cb(err, this.lastID)
-    })
-  }
 
-  static selectBy ( column , value , cb){
-    db.all(`select * from addresses where ${column} = '${value}'`,(err,rows)=>{
-      let dataAddress = []
-      rows.forEach((row)=>{
-        let address = new Addresses(row)
-        this.id = address.id
-        dataAddress.push(address)
-      })
-      cb(dataAddress)
-    })
-  }
+    static deleteID (id){
+      return new Promise(function(resolve, reject) {
+        db.run(`delete from addresses where id = '${id}'`,err=>{
+          resolve()
+        })
+      });
+    }
 
-  static editID ( street , city , zipcode, cb ){
-    db.run(`update addresses set street='${street}' , city = '${city}' , zipcode = '${zipcode}' where id = '${this.id}'`,err=>{
-      cb()
-    })
-  }
 
-  static deleteID (cb){
-    db.run(`delete from addresses where id = '${this.id}'`,err=>{
-      cb()
-    })
   }
-
-}
 
 module.exports = Addresses;

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>List Profiles</title>
+</head>
+
+<body>
+  <a href="../">Back to groups</a><br><br>
+
+
+  <form action="/groups/assign/<%=dataGroups[0].id%>" method="post">
+    <br>
+    <select name="selectContact" required>
+      <option value="">-- Please select contact ---</option>
+      <% for (let i=0 ; i < dataContacts.length ; i++) {%>
+      <option value="<%=dataContacts[i].id%>"><%=dataContacts[i].name%></option>
+      <%}%>
+    </select><br>
+    <input type="submit" value="Add Member">
+  </form>
+</body>
+
+</html>
